@@ -1,0 +1,18 @@
+[
+ {"id":"tab1","type":"tab","label":"TH4","disabled":false,"info":""},
+ {"id":"brk1","type":"mqtt-broker","name":"HiveMQ","broker":"broker.hivemq.com","port":"1883","clientid":"","autoConnect":true,"usetls":false,"protocolVersion":"4","keepalive":"60","cleansession":true},
+ {"id":"uitab1","type":"ui_tab","name":"TH4","icon":"dashboard","disabled":false,"hidden":false},
+ {"id":"uigrp1","type":"ui_group","name":"ESP32","tab":"uitab1","order":1,"disp":true,"width":"6","collapse":false},
+ {"id":"in_tele","type":"mqtt in","z":"tab1","name":"telemetry","topic":"aet2022/sv-20xxxxxx/telemetry","qos":"0","datatype":"json","broker":"brk1","x":120,"y":100,"wires":[["fn_split","dbg1"]]},
+ {"id":"fn_split","type":"function","z":"tab1","name":"tach truong","func":"var p = msg.payload;\nreturn [\n  {payload: p.temp},\n  {payload: p.hum},\n  {payload: p.uptime}\n];","outputs":3,"x":310,"y":100,"wires":[["g_temp","c_temp"],["g_hum"],["g_up"]]},
+ {"id":"g_temp","type":"ui_gauge","z":"tab1","name":"Nhiet do","group":"uigrp1","order":1,"width":3,"height":3,"gtype":"gage","title":"Nhiet do","label":"°C","format":"{{value | number:1}}","min":0,"max":50,"colors":["#00b500","#e6e600","#ca3838"],"x":520,"y":60,"wires":[]},
+ {"id":"c_temp","type":"ui_chart","z":"tab1","name":"Chart nhiet","group":"uigrp1","order":3,"width":6,"height":4,"label":"Nhiet do theo thoi gian","chartType":"line","legend":"false","xformat":"HH:mm:ss","interpolate":"linear","nodata":"Cho du lieu...","dot":false,"ymin":"","ymax":"","removeOlder":"5","removeOlderPoints":"","removeOlderUnit":"60","cutout":0,"useOneColor":false,"colors":["#1f77b4"],"x":530,"y":100,"wires":[[]]},
+ {"id":"g_hum","type":"ui_gauge","z":"tab1","name":"Do am","group":"uigrp1","order":2,"width":3,"height":3,"gtype":"gage","title":"Do am","label":"%","format":"{{value | number:1}}","min":0,"max":100,"colors":["#00b500","#e6e600","#ca3838"],"x":520,"y":140,"wires":[]},
+ {"id":"g_up","type":"ui_gauge","z":"tab1","name":"Uptime (tu them)","group":"uigrp1","order":4,"width":6,"height":2,"gtype":"gage","title":"Uptime","label":"giay","format":"{{value}}","min":0,"max":3600,"colors":["#00b500","#e6e600","#ca3838"],"x":550,"y":180,"wires":[]},
+ {"id":"sw_led","type":"ui_switch","z":"tab1","name":"LED","label":"LED GPIO14","tooltip":"","group":"uigrp1","order":5,"width":6,"height":1,"passthru":false,"decouple":"false","topic":"","topicType":"str","style":"","onvalue":"1","onvalueType":"str","onicon":"","oncolor":"","offvalue":"0","offvalueType":"str","officon":"","offcolor":"","animate":false,"x":110,"y":260,"wires":[["out_led"]]},
+ {"id":"out_led","type":"mqtt out","z":"tab1","name":"cmd/led","topic":"aet2022/sv-20xxxxxx/cmd/led","qos":"0","retain":"false","respTopic":"","contentType":"","userProps":"","correl":"","expiry":"","broker":"brk1","x":330,"y":260,"wires":[]},
+ {"id":"in_btn","type":"mqtt in","z":"tab1","name":"button","topic":"aet2022/sv-20xxxxxx/button","qos":"0","datatype":"auto-detect","broker":"brk1","x":110,"y":340,"wires":[["fn_btn"]]},
+ {"id":"fn_btn","type":"function","z":"tab1","name":"nut -> chu","func":"msg.payload = (String(msg.payload) === '1') ? 'DANG NHAN' : 'nha';\nreturn msg;","outputs":1,"x":290,"y":340,"wires":[["txt_btn"]]},
+ {"id":"txt_btn","type":"ui_text","z":"tab1","group":"uigrp1","order":6,"width":6,"height":1,"name":"Nut tren ESP32","label":"Nut","format":"{{msg.payload}}","layout":"row-spread","x":480,"y":340,"wires":[]},
+ {"id":"dbg1","type":"debug","z":"tab1","name":"debug","active":true,"tosidebar":true,"console":false,"tostatus":false,"complete":"payload","targetType":"msg","x":310,"y":40,"wires":[]}
+]
